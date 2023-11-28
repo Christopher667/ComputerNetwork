@@ -1,36 +1,17 @@
 import os
 import socket
 
-
+#wget www.bjtu.edu.cn -e use_proxy=on -e http_proxy=127.0.0.1:8000
 def handleReq(clientSocket):
     # recv data
     # find the fileName
     # judge if the file named "fileName" if existed
     # if not exists, send req to get it
-    try:
-        recvData = clientSocket.recv(1024).decode("UTF-8")
-        print("Debug: Received data from client:", recvData)
 
-        # Split the received data into lines
-        requestLines = recvData.split("\r\n")
-
-        # Check if the request has at least one line
-        if not requestLines:
-            print("Error: Empty request received from client.")
-            return
-
-        # Extract the first line of the request
-        reqHeaderLine = requestLines[0]
-        print("Debug: Request header line:", reqHeaderLine)
-
-        # Extract the requested file name from the first line
-        fileName = reqHeaderLine.split()[1].split("//")[1].replace('/', '')
-        print("Debug: Processed fileName:", fileName)
-        print("fileName: " + fileName)
-        filePath = "./" + fileName.split(":")[0].replace('.', '_')
-    except Exception as e:
-        print("Error: {0}".format(e))
-
+    recvData = clientSocket.recv(1024).decode("UTF-8")
+    fileName = recvData.split()[1].split("//")[1].replace('/', '')
+    print("fileName: " + fileName)
+    filePath = "./" + fileName.split(":")[0].replace('.', '_')
     try:
         file = open(filePath + "./index.html", 'rb')
         print("File is found in proxy server.")
@@ -74,7 +55,7 @@ def startProxy(port):
             handleReq(clientSocket)
             clientSocket.close()
         except Exception as e:
-            print("Error: {0}".format(e))
+            print("error: {0}".format(e))
             break
     proxyServerSocket.close()
 
